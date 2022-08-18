@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  db: # NOTE: pgTAP will only try to connect to "db" container. So this must be "db".
+    image: postgres:latest
+    container_name: ${DEV_DOCKER_CONTAINER_NAME}
+    networks:
+      - db-net
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    environment:
+      - POSTGRES_USER=${DEV_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DEV_POSTGRES_PASSWORD}
+      - APP_DB_USER=${DEV_APP_DB_USER}
+      - APP_DB_PASS=${DEV_APP_DB_PASS}
+      - APP_DB_NAME=${DEV_APP_DB_NAME}
+    volumes:
+      - ./src/init:/docker-entrypoint-initdb.d/
+      - ./src/design:/design/
+    ports:
+      - "${DEV_DB_PORT}:5432"
+  pgtap:
+    image: hbpmip/pgtap:latest
+    networks:
+      - db-net
+    environment:
+      - DATABASE=${DEV_APP_DB_NAME}
+      - USER=${DEV_APP_DB_USER}
+      - PASSWORD=${DEV_APP_DB_PASS}
+    depends_on:
+      - db
+    volumes:
+      - ./src/test:/test/
+
+networks:
+  db-net:
+    name: dev-my-movies-network-db
