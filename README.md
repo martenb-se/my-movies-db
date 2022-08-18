@@ -77,7 +77,7 @@ In order to test the database (when it's running), run the following:
 ```text
 $ ./run.tests.pgtap.sh
 [+] Running 1/0
- ⠿ Container dev-my-movies-db        Running                                                                                                                                                            0.0s
+ ⠿ Container dev-my-movies-db        Running                                  0.0s
 Waiting for database...
 2022/08/17 13:10:03 Waiting for: tcp://db:5432
 2022/08/17 13:10:03 Connected to tcp://db:5432
